@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Discussion | LearnHub{% endblock %}
+
+{% block style %}
+    .glass-box {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(12px);
+    }
+    .input-box {
+        background: rgba(255, 255, 255, 0.2);
+        border: none; outline: none; color: #fff;
+        border-radius: 0.5rem; width: 100%;
+        padding: 0.75rem 1rem;
+    }
+    .input-box::placeholder { color: rgba(255, 255, 255, 0.6); }
+{% endblock %}
+
+{% block content %}
+<main class="pt-24 px-6 md:px-20 space-y-10">
+    <section class="glass-box rounded-2xl p-6 shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4">Main Discussion Hall</h2>
+        <p class="text-gray-300 mb-4">To keep conversations organized, please navigate to a course you are enrolled in and use the dedicated "Course Forum" link on the course detail page to ask questions related to that course.</p>
+        <a href="{% url 'course_list_page' %}" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded font-semibold">Browse Courses</a>
+    </section>
+
+    <section class="space-y-8">
+        <div class="glass-box p-6 rounded-2xl shadow-lg">
+            <h3 class="font-semibold text-lg">Welcome to the Discussion Hall!</h3>
+            <p class="text-gray-300 mb-4">Use the course-specific forums for asking questions related to your studies.</p>
+        </div>
+    </section>
+</main>
+{% endblock %}

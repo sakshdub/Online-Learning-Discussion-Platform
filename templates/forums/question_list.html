@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Discussion Forum: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="pt-24 px-6 md:px-20">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"> {# Adjusted flex for smaller screens #}
+            <div>
+                <h2 class="text-3xl font-bold text-white">Discussion Forum</h2>
+                <p class="text-gray-400">for course: <span class="text-red-400 font-semibold">{{ course.title }}</span></p>
+            </div>
+            <a href="{% url 'add_question' course_id=course.pk %}" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded font-semibold whitespace-nowrap"> {# Added whitespace-nowrap #}
+                Ask a New Question
+            </a>
+        </div>
+
+        <div class="space-y-4">
+            {% for question in questions %}
+                <a href="{% url 'question_detail' question_id=question.pk %}" class="block bg-gray-800/50 p-4 rounded-lg hover:bg-gray-700/50 transition">
+                    <h3 class="font-semibold text-lg text-white">{{ question.title }}</h3>
+                    <p class="text-sm text-gray-400">
+                        Asked by {{ question.user.username }} on {{ question.created_at|date:"F d, Y" }}
+                    </p>
+                </a>
+            {% empty %}
+                <div class="bg-gray-800/50 p-6 rounded-lg text-center">
+                    <p class="text-gray-300">No questions have been asked in this forum yet. Be the first!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

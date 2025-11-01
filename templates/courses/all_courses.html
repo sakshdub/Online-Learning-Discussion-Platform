@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}All Courses | LearnHub{% endblock %}
+
+{% block content %}
+<div class="pt-24 px-6 md:px-20">
+    <h2 class="text-3xl font-bold text-white mb-6">All Available Courses</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for course in courses %}
+            <a href="{% url 'course_detail' pk=course.pk %}" class="block bg-gray-900 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition">
+                <img src="https://via.placeholder.com/250x150/1f2937/6b7280?text=Course+Image" class="w-full h-32 object-cover" alt="{{ course.title }}">
+                <div class="p-3">
+                    <h3 class="text-white font-semibold">{{ course.title }}</h3>
+                    <p class="text-gray-400 text-sm">Instructor: {{ course.instructor.username }}</p>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-gray-300">No courses are available at the moment.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

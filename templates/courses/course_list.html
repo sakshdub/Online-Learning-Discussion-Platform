@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}LearnHub | All Streams Learning{% endblock %}
+
+{% block style %}
+    .scroll-row { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; }
+    .scroll-row::-webkit-scrollbar { height: 8px; }
+    .scroll-row::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 999px; }
+    .course-card { min-width: 200px; transition: transform 0.2s ease; }
+    .course-card:hover { transform: scale(1.05); }
+{% endblock %}
+
+{% block content %}
+    <section class="relative h-[60vh] w-full bg-cover bg-center mt-16" style="background-image: url('https://images.unsplash.com/photo-1522205408450-add114ad53fe?auto=format&fit=crop&w=1600&q=80');">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        <div class="absolute bottom-16 left-10 max-w-xl">
+            <h1 class="text-5xl font-bold mb-4">Build Your Future, Today</h1>
+            <p class="text-gray-300 mb-6">Expert-led courses in Python, Django, Java, Data Science, and more. Everything you need for your technical studies and to land your next dev role.</p>
+            <div class="flex gap-3">
+                <a href="{% url 'course_list_page' %}" class="bg-red-600 text-white px-5 py-2 rounded hover:bg-red-700 font-medium">Explore Courses</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="px-8 mt-10 space-y-12">
+        {% if courses %}
+            <section>
+                <h2 class="text-xl font-semibold mb-4">Recently Added Courses</h2>
+                <div class="scroll-row">
+                    {% for course in courses %}
+                        <a href="{% url 'course_detail' pk=course.pk %}" class="course-card rounded-lg overflow-hidden shadow-lg bg-gray-900 block" style="min-width: 250px;">
+                            <img src="https://via.placeholder.com/250x150/1f2937/6b7280?text=Course+Image" class="w-full h-32 object-cover" alt="{{ course.title }}">
+                            <div class="p-3">
+                                <h3 class="text-white font-semibold">{{ course.title }}</h3>
+                                <p class="text-gray-400 text-sm">Instructor: {{ course.instructor.username }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% else %}
+            <p class="px-8 text-gray-400">No courses are available at the moment.</p>
+        {% endif %}
+    </div>
+{% endblock %}

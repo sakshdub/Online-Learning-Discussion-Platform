@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}{{ question.title }}{% endblock %}
+
+{% block content %}
+<div class="pt-24 px-6 md:px-20">
+    <div class="max-w-4xl mx-auto">
+
+        <a href="{% url 'question_list' course_id=question.course.pk %}" class="inline-block text-red-400 hover:text-red-300 mb-4">&larr; Back to Forum</a>
+
+        <div class="bg-gray-800/50 p-6 rounded-lg mb-8">
+            <h2 class="text-3xl font-bold text-white mb-2">{{ question.title }}</h2>
+            <p class="text-sm text-gray-400 mb-4">
+                Asked by {{ question.user.username }} on {{ question.created_at|date:"F d, Y" }}
+            </p>
+            <div class="text-gray-300 prose">
+                {{ question.content|linebreaks }}
+            </div>
+        </div>
+
+        <h3 class="text-2xl font-semibold text-white mb-4">Answers ({{ answers.count }})</h3>
+        <div class="space-y-4 mb-8">
+            {% for answer in answers %}
+                <div class="bg-gray-800/30 p-4 rounded-lg">
+                    <p class="text-sm text-gray-400 mb-2">
+                        Answer by {{ answer.user.username }} on {{ answer.created_at|date:"F d, Y" }}
+                    </p>
+                    <p class="text-gray-300">{{ answer.content|linebreaks }}</p>
+
+                    <div class="vote-controls flex items-center gap-4 mt-4">
+                        
+                        <form action="{% url 'vote_answer' answer.id %}" method="POST" class="m-0">
+                            {% csrf_token %}
+                            <input type="hidden" name="vote_type" value="up">
+                            <button type="submit" class="flex items-center text-sm font-medium text-green-400 hover:text-green-300">
+                                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+                                Upvote ({{ answer.upvotes }})
+                            </button>
+                        </form>
+                        
+                        <form action="{% url 'vote_answer' answer.id %}" method="POST" class="m-0">
+                            {% csrf_token %}
+                            <input type="hidden" name="vote_type" value="down">
+                            <button type="submit" class="flex items-center text-sm font-medium text-red-400 hover:text-red-300">
+                                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                Downvote ({{ answer.downvotes }})
+                            </button>
+                        </form>
+                        
+                    </div>
+                    </div>
+            {% empty %}
+                <p class="text-gray-400">No answers have been posted yet. Be the first to reply!</p>
+            {% endfor %}
+        </div>
+
+        {% if user.is_authenticated %}
+            <div class="bg-gray-800/50 p-6 rounded-lg">
+                <h3 class="text-xl font-semibold text-white mb-4">Post Your Answer</h3>
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if answer_form.non_field_errors %}
+                        <div class="bg-red-700 text-red-100 p-3 rounded text-sm mb-4">
+                            {% for error in answer_form.non_field_errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    {% for field in answer_form %}
+                        <div class="mb-4">
+                            {{ field }} {# Render the textarea with styles from base.html #}
+                            {% for error in field.errors %}
+                                <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="mt-4 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded font-semibold">
+                        Submit Answer
+                    </button>
+                </form>
+            </div>
+        {% else %}
+             <p class="text-gray-400">You must be <a href="{% url 'login' %}" class="text-red-400 hover:underline">logged in</a> to post an answer.</p>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} | LearnHub{% endblock %}
+
+{% block style %}
+    .course-card {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+    }
+    .course-img { border-radius: 1rem; }
+{% endblock %}
+
+{% block content %}
+    <section class="pt-28 px-8 flex flex-col md:flex-row items-start gap-10"> {# Changed items-center to items-start #}
+        <img src="https://via.placeholder.com/400x250/1f2937/6b7280?text=Course+Image"
+             alt="{{ course.title }}" class="w-full md:w-1/2 course-img shadow-lg" />
+
+        <div class="course-card rounded-2xl p-8 w-full md:w-1/2 shadow-2xl">
+            <h1 class="text-4xl font-bold mb-3">{{ course.title }}</h1>
+            <p class="text-gray-300 mb-6">{{ course.description }}</p>
+
+            <h2 class="text-xl font-semibold mb-2">👨‍🏫 Instructor:</h2>
+            <p class="text-gray-300 mb-6">{{ course.instructor.username }}</p>
+
+            {% if enrolled %}
+                <h2 class="text-xl font-semibold mb-2">📘 Course Materials:</h2>
+                <ul class="list-disc list-inside text-gray-300 mb-6">
+                    {% for material in materials %}
+                        <li><a href="{{ material.file.url }}" class="text-red-400 hover:underline" target="_blank">{{ material.title }}</a></li> {# Added target="_blank" #}
+                    {% empty %}
+                        <li>No materials uploaded yet.</li>
+                    {% endfor %}
+                </ul>
+
+                <a href="{% url 'question_list' course_id=course.pk %}" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded font-semibold transition">
+                    Go to Course Forum 🚀
+                </a>
+            {% endif %}
+
+            {% if user.is_authenticated and user.role == 'student' %}
+                {% if not enrolled %}
+                    <form action="{% url 'enroll_in_course' pk=course.pk %}" method="post" class="mt-4"> {# Added margin top #}
+                        {% csrf_token %}
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded font-semibold transition">Enroll Now</button>
+                    </form>
+                {% else %}
+                    <p class="text-green-400 font-semibold mt-4">You are enrolled in this course.</p>
+                {% endif %}
+            {% elif not user.is_authenticated %}
+                 <a href="{% url 'login' %}" class="mt-4 inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded font-semibold transition">Login to Enroll</a>
+            {% endif %}
+
+             {% if user == course.instructor %}
+                 <a href="{% url 'add_material' course_id=course.pk %}" class="mt-4 ml-4 inline-block bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded font-semibold transition">
+                    Add Material
+                 </a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
